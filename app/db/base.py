@@ -1,5 +1,4 @@
-from sqlalchemy.orm import DeclarativeBase
+from app.db.registry import Base
 
-
-class Base(DeclarativeBase):
-    pass
+# importar modelos para que Alembic los detecte
+from app.modules.users.models import User  # noqa
