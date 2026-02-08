@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
@@ -8,16 +8,28 @@ from app.db.session import get_db
 from app.modules.users.models import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    oauth_token: str | None = Depends(oauth2_scheme),
+    bearer: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
     )
+
+    # 🔑 PRIORIDAD: Bearer manual > OAuth2
+    token = None
+    if bearer:
+        token = bearer.credentials
+    elif oauth_token:
+        token = oauth_token
+
+    if not token:
+        raise credentials_exception
 
     try:
         payload = jwt.decode(
@@ -36,6 +48,7 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
 
 def require_role(*roles: str):
     def role_checker(user: User = Depends(get_current_user)):
