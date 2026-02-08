@@ -1,8 +1,9 @@
+from app.modules.branches.models import Branch
 from sqlalchemy import Boolean, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.db.registry import Base
 from app.modules.users.roles_models import Role
+
 
 
 class User(Base):
@@ -23,4 +24,5 @@ class User(Base):
         nullable=True,
     )
 
-    branch = relationship("Branch")
+    branch = relationship(Branch)
+

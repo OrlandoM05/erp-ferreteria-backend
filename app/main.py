@@ -53,3 +53,5 @@ def startup_event():
     - Startup debe ser SIEMPRE liviano y seguro
     """
     pass
+
+#PARCHADO/ MODIFICADO LA PARTE DE APP/MAIN / STARTUPEVENT 
