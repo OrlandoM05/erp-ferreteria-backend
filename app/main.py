@@ -9,6 +9,9 @@ from app.modules.inventory.router import router as inventory_router
 from app.modules.suppliers.router import router as suppliers_router
 from app.modules.purchases.router import router as purchases_router
 from app.modules.finance.router import router as finance_router
+from app.modules.sales.router import router as sales_router
+
+
 
 
 
@@ -44,4 +47,5 @@ app.include_router(inventory_router)
 app.include_router(suppliers_router)
 app.include_router(purchases_router)
 app.include_router(finance_router)
-#PASO NUMERO 49
+app.include_router(sales_router)
+#PASO NUMERO 72

@@ -37,6 +37,14 @@ def pay_payable(
             detail="Payable not found"
         )
 
+    # 🔒 Regla ERP: no se puede pagar dos veces
+    if payable.status == "PAGADO":
+        raise HTTPException(
+            status_code=400,
+            detail="Payable already paid"
+        )
+
     payable.status = "PAGADO"
     db.commit()
+
     return {"status": "paid"}
