@@ -49,8 +49,8 @@ def seed_permissions(db: Session):
 
 
 def seed_branch(db: Session):
-    # ✅ sucursal base del sistema
-    if not db.query(Branch).first():
+    branch = db.query(Branch).filter(Branch.name == "Matriz").first()
+    if not branch:
         db.add(Branch(name="Matriz", is_active=True))
         db.commit()
 
@@ -63,14 +63,15 @@ def seed_admin(db: Session):
         return
 
     admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    branch = db.query(Branch).filter(Branch.name == "Matriz").first()
 
     admin = User(
         email=admin_email,
         hashed_password=hash_password("admin123"),
         is_active=True,
         is_superuser=True,
-        role=admin_role,
-        # branch_id se puede asignar después si lo deseas
+        role_id=admin_role.id,
+        branch_id=branch.id,
     )
 
     db.add(admin)
@@ -80,5 +81,5 @@ def seed_admin(db: Session):
 def run_seeds(db: Session):
     seed_roles(db)
     seed_permissions(db)
-    seed_branch(db)   # 🔥 IMPORTANTE: antes de usar inventario
+    seed_branch(db)
     seed_admin(db)
