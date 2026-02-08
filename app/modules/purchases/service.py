@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem
 from app.modules.inventory.service import add_stock
+from app.modules.finance.service import create_payable_from_order
+from app.modules.suppliers.models import Supplier
 
 
 def receive_items(
@@ -31,8 +33,25 @@ def receive_items(
             reason=f"Compra #{order.id}",
         )
 
+    # 🔁 Actualizar estado de la orden
     if all(i.quantity_received == i.quantity_ordered for i in order.items):
         order.status = "COMPLETO"
+
+        # 🔥 PASO 61 — crear payable automáticamente
+        supplier = db.get(Supplier, order.supplier_id)
+
+        total = sum(
+            i.price * i.quantity_ordered
+            for i in order.items
+        )
+
+        create_payable_from_order(
+            db=db,
+            order=order,
+            amount=total,
+            credit_days=supplier.credit_days,
+        )
+
     else:
         order.status = "PARCIAL"
 
