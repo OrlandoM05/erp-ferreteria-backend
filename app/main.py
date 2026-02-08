@@ -6,6 +6,9 @@ from app.db.session import SessionLocal
 from app.db.seeds.initial_data import run_seeds
 from app.modules.products.router import router as products_router
 from app.modules.inventory.router import router as inventory_router
+from app.modules.suppliers.router import router as suppliers_router
+
+
 
 
 
@@ -33,4 +36,5 @@ def startup_event():
 
 app.include_router(products_router)
 app.include_router(inventory_router)
-#PASO NUMERO 8
+app.include_router(suppliers_router)
+#PASO NUMERO 29
