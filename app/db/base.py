@@ -8,4 +8,8 @@ from app.modules.suppliers.models import Supplier, ProductSupplier  # noqa
 from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem  # noqa
 from app.modules.finance.models import Payable  # noqa
 from app.modules.sales.models import Sale, SaleItem  # noqa
+from app.modules.branches.models import Branch  # noqa
+
+
+
 

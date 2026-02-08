@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.modules.users.models import User
 from app.modules.users.roles_models import Role, Permission
+from app.modules.branches.models import Branch
 from app.core.security import hash_password
 
 
@@ -47,35 +48,37 @@ def seed_permissions(db: Session):
     db.commit()
 
 
+def seed_branch(db: Session):
+    # ✅ sucursal base del sistema
+    if not db.query(Branch).first():
+        db.add(Branch(name="Matriz", is_active=True))
+        db.commit()
+
+
 def seed_admin(db: Session):
     admin_email = "admin@erp.com"
 
-    admin_role = db.query(Role).filter(Role.name == "Admin").first()
-    if not admin_role:
-        return
-
     admin = db.query(User).filter(User.email == admin_email).first()
-
-    if not admin:
-        admin = User(
-            email=admin_email,
-            hashed_password=hash_password("admin123"),
-            is_active=True,
-            is_superuser=True,
-            role=admin_role,
-        )
-        db.add(admin)
-        db.commit()
+    if admin:
         return
 
-    # 🔧 corrección automática
-    if not admin.role:
-        admin.role = admin_role
-        db.commit()
+    admin_role = db.query(Role).filter(Role.name == "Admin").first()
 
+    admin = User(
+        email=admin_email,
+        hashed_password=hash_password("admin123"),
+        is_active=True,
+        is_superuser=True,
+        role=admin_role,
+        # branch_id se puede asignar después si lo deseas
+    )
+
+    db.add(admin)
+    db.commit()
 
 
 def run_seeds(db: Session):
     seed_roles(db)
     seed_permissions(db)
+    seed_branch(db)   # 🔥 IMPORTANTE: antes de usar inventario
     seed_admin(db)

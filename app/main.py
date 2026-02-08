@@ -42,4 +42,4 @@ app.include_router(purchases_router)
 app.include_router(finance_router)
 app.include_router(sales_router)
 app.include_router(reports_router)
-#PASO NUMERO REPORTES
+#PASO NUMERO 79
