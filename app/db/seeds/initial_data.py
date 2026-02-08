@@ -50,22 +50,29 @@ def seed_permissions(db: Session):
 def seed_admin(db: Session):
     admin_email = "admin@erp.com"
 
-    admin = db.query(User).filter(User.email == admin_email).first()
-    if admin:
+    admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    if not admin_role:
         return
 
-    admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    admin = db.query(User).filter(User.email == admin_email).first()
 
-    admin = User(
-        email=admin_email,
-        hashed_password=hash_password("admin123"),
-        is_active=True,
-        is_superuser=True,
-        role=admin_role,
-    )
+    if not admin:
+        admin = User(
+            email=admin_email,
+            hashed_password=hash_password("admin123"),
+            is_active=True,
+            is_superuser=True,
+            role=admin_role,
+        )
+        db.add(admin)
+        db.commit()
+        return
 
-    db.add(admin)
-    db.commit()
+    # 🔧 corrección automática
+    if not admin.role:
+        admin.role = admin_role
+        db.commit()
+
 
 
 def run_seeds(db: Session):
