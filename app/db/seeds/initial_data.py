@@ -63,7 +63,12 @@ def seed_admin(db: Session):
         return
 
     admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    if not admin_role:
+        raise RuntimeError("Seed error: Admin role not found")
+
     branch = db.query(Branch).filter(Branch.name == "Matriz").first()
+    if not branch:
+        raise RuntimeError("Seed error: Matriz branch not found")
 
     admin = User(
         email=admin_email,
@@ -78,8 +83,18 @@ def seed_admin(db: Session):
     db.commit()
 
 
+
 def run_seeds(db: Session):
     seed_roles(db)
     seed_permissions(db)
     seed_branch(db)
     seed_admin(db)
+if __name__ == "__main__":
+    from app.db.session import SessionLocal
+
+    db = SessionLocal()
+    try:
+        run_seeds(db)
+        print("✔ Seeds ejecutados correctamente")
+    finally:
+        db.close()
