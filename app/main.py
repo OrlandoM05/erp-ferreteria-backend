@@ -4,6 +4,8 @@ from app.modules.auth.router import router as auth_router
 from app.modules.users.router import router as users_router
 from app.db.session import SessionLocal
 from app.db.seeds.initial_data import run_seeds
+from app.modules.products.router import router as products_router
+
 
 
 
@@ -28,3 +30,6 @@ def startup_event():
         run_seeds(db)
     finally:
         db.close()
+
+app.include_router(products_router)
+#PASO NUMERO 8
