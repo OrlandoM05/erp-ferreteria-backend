@@ -22,6 +22,7 @@ def create_inventory_endpoint(
 ):
     inventory = Inventory(
         product_id=data.product_id,
+        branch_id=data.branch_id,
         min_quantity=data.min_quantity,
         quantity=0,
     )
@@ -40,6 +41,7 @@ def add_stock_endpoint(
     inventory = service.add_stock(
         db=db,
         product_id=data.product_id,
+        branch_id=data.branch_id,
         quantity=data.quantity,
         user_id=user.id,
         reason=data.reason,
@@ -56,6 +58,7 @@ def remove_stock_endpoint(
     inventory = service.remove_stock(
         db=db,
         product_id=data.product_id,
+        branch_id=data.branch_id,
         quantity=data.quantity,
         user_id=user.id,
         reason=data.reason,

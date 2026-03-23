@@ -7,11 +7,15 @@ from app.modules.inventory.models import Inventory, InventoryMovement
 def add_stock(
     db: Session,
     product_id: int,
+    branch_id: int,
     quantity: int,
     user_id: int,
     reason: str,
 ):
-    inventory = db.query(Inventory).filter_by(product_id=product_id).first()
+    inventory = db.query(Inventory).filter_by(
+        product_id=product_id,
+        branch_id=branch_id,
+    ).first()
 
     if not inventory:
         raise HTTPException(status_code=404, detail="Inventory not found")
@@ -28,19 +32,30 @@ def add_stock(
 
     db.add(movement)
     db.commit()
+    db.refresh(inventory)
     return inventory
 
 
 def remove_stock(
     db: Session,
     product_id: int,
+    branch_id: int,
     quantity: int,
     user_id: int,
     reason: str,
 ):
-    inventory = db.query(Inventory).filter_by(product_id=product_id).first()
+    inventory = db.query(Inventory).filter_by(
+        product_id=product_id,
+        branch_id=branch_id,
+    ).first()
 
-    if not inventory or inventory.quantity < quantity:
+    if not inventory:
+        raise HTTPException(
+            status_code=404,
+            detail="Inventory not found",
+        )
+
+    if inventory.quantity < quantity:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Insufficient stock",
@@ -58,4 +73,5 @@ def remove_stock(
 
     db.add(movement)
     db.commit()
+    db.refresh(inventory)
     return inventory
