@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales"; // 🔥 IMPORTANTE
+import Inventory from "../pages/Inventory";
 
 export default function AppRouter() {
   return (
@@ -26,7 +27,7 @@ export default function AppRouter() {
                   
                   {/* 🔥 NUEVA RUTA */}
                   <Route path="/sales" element={<Sales />} />
-
+                  <Route path="/inventory" element={<Inventory />} />
                 </Routes>
               </MainLayout>
             </ProtectedRoute>
