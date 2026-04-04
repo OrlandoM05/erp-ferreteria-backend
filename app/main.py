@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.config import settings
 
 from app.modules.auth.router import router as auth_router
@@ -11,12 +13,24 @@ from app.modules.finance.router import router as finance_router
 from app.modules.sales.router import router as sales_router
 from app.modules.reports.router import router as reports_router
 
+
 app = FastAPI(
     title=settings.app_name,
     debug=settings.debug,
     swagger_ui_init_oauth={
         "usePkceWithAuthorizationCodeGrant": False
     }
+)
+
+# --------------------------------------------------
+# ✅ CORS (ESTO ES LO QUE FALTABA)
+# --------------------------------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # 👈 tu frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --------------------------------------------------
@@ -46,12 +60,4 @@ app.include_router(reports_router)
 # --------------------------------------------------
 @app.on_event("startup")
 def startup_event():
-    """
-    IMPORTANTE:
-    - NO ejecutar seeds aquí
-    - NO ejecutar migraciones aquí
-    - Startup debe ser SIEMPRE liviano y seguro
-    """
     pass
-
-#PARCHADO/ MODIFICADO LA PARTE DE APP/MAIN / STARTUPEVENT 
