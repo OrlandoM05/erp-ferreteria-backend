@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ export default function Login() {
       setLoading(true);
       setError("");
 
-      const res = await axios.post("http://localhost:8000/auth/login", {
+      const res = await api.post("/auth/login", {
         email,
         password,
       });
@@ -24,9 +24,22 @@ export default function Login() {
 
       navigate("/");
     } catch (err) {
-      setError("Correo o contraseña incorrectos");
+      if (err.response?.status === 401) {
+        setError("Correo o contraseña incorrectos");
+      } else if (err.response?.status === 403) {
+        setError("Usuario inactivo");
+      } else {
+        setError("Error de conexión con el servidor");
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 👉 Permite presionar ENTER
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -48,6 +61,7 @@ export default function Login() {
           placeholder="Correo"
           className="w-full mb-4 p-3 rounded bg-[#020617] border border-gray-700 text-white"
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
 
         <input
@@ -55,6 +69,7 @@ export default function Login() {
           placeholder="Contraseña"
           className="w-full mb-6 p-3 rounded bg-[#020617] border border-gray-700 text-white"
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
 
         <button
