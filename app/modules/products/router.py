@@ -42,3 +42,9 @@ def create_product_endpoint(
     )
 
     return repository.create_product(db, product)
+@router.get("", response_model=list[ProductResponse])
+def list_products(
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    return db.query(Product).all()

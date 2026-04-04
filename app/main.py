@@ -61,3 +61,5 @@ app.include_router(reports_router)
 @app.on_event("startup")
 def startup_event():
     pass
+
+#ULTIMA ACTUALIZACION 4/4/2026 FUNCIONA con key

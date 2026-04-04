@@ -3,6 +3,7 @@ import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
+import Products from "../pages/Products";
 
 export default function AppRouter() {
   return (
@@ -20,6 +21,7 @@ export default function AppRouter() {
               <MainLayout>
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
+                  <Route path="/products" element={<Products />} />
                 </Routes>
               </MainLayout>
             </ProtectedRoute>
