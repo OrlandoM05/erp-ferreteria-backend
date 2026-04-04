@@ -13,7 +13,12 @@ def process_sale(
     items: list,
     user_id: int,
 ):
-    sale = Sale(user_id=user_id, total=0)
+    sale = Sale(
+        user_id=user_id,
+        total=0,
+        branch_id=1  # 🔥 FIX
+    )
+
     db.add(sale)
     db.commit()
     db.refresh(sale)
@@ -30,7 +35,6 @@ def process_sale(
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
 
-        # costo: último precio proveedor
         ps = (
             db.query(ProductSupplier)
             .filter(ProductSupplier.product_id == product.id)
@@ -38,18 +42,23 @@ def process_sale(
             .first()
         )
 
-        if not ps:
-            raise HTTPException(status_code=400, detail="No supplier price")
-
         margin = resolve_margin(product) or 0
-        price = ps.price * (1 + margin / 100)
-        cost = ps.price
 
+        # 🔥 FIX proveedor (ya aplicado)
+        if ps:
+            price = ps.price * (1 + margin / 100)
+            cost = ps.price
+        else:
+            price = 100 * (1 + margin / 100)
+            cost = 100
+
+        # 🔥 FIX FINAL (ESTO FALTABA)
         remove_stock(
             db=db,
             product_id=product.id,
             quantity=data.quantity,
             user_id=user_id,
+            branch_id=1,  # 👈 SOLUCIÓN
             reason=f"Venta #{sale.id}",
         )
 

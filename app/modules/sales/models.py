@@ -12,6 +12,9 @@ class Sale(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
+    # 🔥 FIX (AGREGADO)
+    branch_id: Mapped[int] = mapped_column(Integer)
+
     total: Mapped[float]
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
@@ -27,8 +30,8 @@ class SaleItem(Base):
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
 
     quantity: Mapped[int]
-    price: Mapped[float]   # precio venta
-    cost: Mapped[float]    # costo real
+    price: Mapped[float]
+    cost: Mapped[float]
     profit: Mapped[float]
 
     sale = relationship("Sale", back_populates="items")
