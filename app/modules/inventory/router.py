@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -20,12 +20,22 @@ def create_inventory_endpoint(
     db: Session = Depends(get_db),
     user=Depends(require_role("Admin", "Almacen")),
 ):
+    # ✅ VALIDACIÓN NUEVA (IMPORTANTE)
+    existing = db.query(Inventory).filter_by(
+        product_id=data.product_id,
+        branch_id=data.branch_id
+    ).first()
+
+    if existing:
+        raise HTTPException(400, "Inventory already exists")
+
     inventory = Inventory(
         product_id=data.product_id,
         branch_id=data.branch_id,
         min_quantity=data.min_quantity,
         quantity=0,
     )
+
     db.add(inventory)
     db.commit()
     db.refresh(inventory)
@@ -38,7 +48,7 @@ def add_stock_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    inventory = service.add_stock(
+    return service.add_stock(
         db=db,
         product_id=data.product_id,
         branch_id=data.branch_id,
@@ -46,7 +56,6 @@ def add_stock_endpoint(
         user_id=user.id,
         reason=data.reason,
     )
-    return inventory
 
 
 @router.post("/out", response_model=InventoryResponse)
@@ -55,7 +64,7 @@ def remove_stock_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    inventory = service.remove_stock(
+    return service.remove_stock(
         db=db,
         product_id=data.product_id,
         branch_id=data.branch_id,
@@ -63,4 +72,3 @@ def remove_stock_endpoint(
         user_id=user.id,
         reason=data.reason,
     )
-    return inventory

@@ -16,13 +16,11 @@ class Inventory(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    # ✅ multi-sucursal (branch existe en app/modules/branches)
     branch_id: Mapped[int] = mapped_column(
         ForeignKey("branches.id"),
         nullable=False,
     )
 
-    # ❌ ya no es unique aquí
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id"),
         nullable=False,
@@ -36,7 +34,6 @@ class Inventory(Base):
     )
 
     product = relationship("Product")
-    # branch = relationship("Branch")  # opcional, NO obligatorio por ahora
 
 
 class InventoryMovement(Base):
@@ -46,6 +43,11 @@ class InventoryMovement(Base):
 
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id"),
+        nullable=False,
+    )
+
+    branch_id: Mapped[int] = mapped_column(  # ✅ agregado (importante)
+        ForeignKey("branches.id"),
         nullable=False,
     )
 

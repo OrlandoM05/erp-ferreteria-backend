@@ -1,0 +1,2776 @@
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\.env ===
+
+# App
+APP_NAME=ERP Ferreteria
+ENV=development
+DEBUG=1
+
+# Security
+SECRET_KEY=super-secret-key-cambiar
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+# Database
+POSTGRES_USER=erp_user
+POSTGRES_PASSWORD=erp_password
+POSTGRES_DB=erp_ferreteria
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+DATABASE_URL=postgresql+psycopg2://erp_user:erp_password@db:5432/erp_ferreteria
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\.gitignore ===
+
+.env
+__pycache__/
+*.pyc
+.venv
+.idea
+.vscode
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic.ini ===
+
+# A generic, single database configuration.
+
+[alembic]
+# path to migration scripts.
+# this is typically a path given in POSIX (e.g. forward slashes)
+# format, relative to the token %(here)s which refers to the location of this
+# ini file
+script_location = %(here)s/alembic
+
+# template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+# Uncomment the line below if you want the files to be prepended with date and time
+# see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+# for all available tokens
+# file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
+# Or organize into date-based subdirectories (requires recursive_version_locations = true)
+# file_template = %%(year)d/%%(month).2d/%%(day).2d_%%(hour).2d%%(minute).2d_%%(second).2d_%%(rev)s_%%(slug)s
+
+# sys.path path, will be prepended to sys.path if present.
+# defaults to the current working directory.  for multiple paths, the path separator
+# is defined by "path_separator" below.
+prepend_sys_path = .
+
+
+# timezone to use when rendering the date within the migration file
+# as well as the filename.
+# If specified, requires the tzdata library which can be installed by adding
+# `alembic[tz]` to the pip requirements.
+# string value is passed to ZoneInfo()
+# leave blank for localtime
+# timezone =
+
+# max length of characters to apply to the "slug" field
+# truncate_slug_length = 40
+
+# set to 'true' to run the environment during
+# the 'revision' command, regardless of autogenerate
+# revision_environment = false
+
+# set to 'true' to allow .pyc and .pyo files without
+# a source .py file to be detected as revisions in the
+# versions/ directory
+# sourceless = false
+
+# version location specification; This defaults
+# to <script_location>/versions.  When using multiple version
+# directories, initial revisions must be specified with --version-path.
+# The path separator used here should be the separator specified by "path_separator"
+# below.
+# version_locations = %(here)s/bar:%(here)s/bat:%(here)s/alembic/versions
+
+# path_separator; This indicates what character is used to split lists of file
+# paths, including version_locations and prepend_sys_path within configparser
+# files such as alembic.ini.
+# The default rendered in new alembic.ini files is "os", which uses os.pathsep
+# to provide os-dependent path splitting.
+#
+# Note that in order to support legacy alembic.ini files, this default does NOT
+# take place if path_separator is not present in alembic.ini.  If this
+# option is omitted entirely, fallback logic is as follows:
+#
+# 1. Parsing of the version_locations option falls back to using the legacy
+#    "version_path_separator" key, which if absent then falls back to the legacy
+#    behavior of splitting on spaces and/or commas.
+# 2. Parsing of the prepend_sys_path option falls back to the legacy
+#    behavior of splitting on spaces, commas, or colons.
+#
+# Valid values for path_separator are:
+#
+# path_separator = :
+# path_separator = ;
+# path_separator = space
+# path_separator = newline
+#
+# Use os.pathsep. Default configuration used for new projects.
+path_separator = os
+
+# set to 'true' to search source files recursively
+# in each "version_locations" directory
+# new in Alembic version 1.10
+# recursive_version_locations = false
+
+# the output encoding used when revision files
+# are written from script.py.mako
+# output_encoding = utf-8
+
+# database URL.  This is consumed by the user-maintained env.py script only.
+# other means of configuring database URLs may be customized within the env.py
+# file.
+sqlalchemy.url = ${DATABASE_URL}
+
+
+[post_write_hooks]
+# post_write_hooks defines scripts or Python functions that are run
+# on newly generated revision scripts.  See the documentation for further
+# detail and examples
+
+# format using "black" - use the console_scripts runner, against the "black" entrypoint
+# hooks = black
+# black.type = console_scripts
+# black.entrypoint = black
+# black.options = -l 79 REVISION_SCRIPT_FILENAME
+
+# lint with attempts to fix using "ruff" - use the module runner, against the "ruff" module
+# hooks = ruff
+# ruff.type = module
+# ruff.module = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Alternatively, use the exec runner to execute a binary found on your PATH
+# hooks = ruff
+# ruff.type = exec
+# ruff.executable = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Logging configuration.  This is also consumed by the user-maintained
+# env.py script only.
+[loggers]
+keys = root,sqlalchemy,alembic
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARNING
+handlers = console
+qualname =
+
+[logger_sqlalchemy]
+level = WARNING
+handlers =
+qualname = sqlalchemy.engine
+
+[logger_alembic]
+level = INFO
+handlers =
+qualname = alembic
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(levelname)-5.5s [%(name)s] %(message)s
+datefmt = %H:%M:%S
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\docker-compose.yml ===
+
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: erp_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: erp_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\Dockerfile ===
+
+FROM python:3.11-slim
+
+WORKDIR /code
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update \
+    && apt-get install -y build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
+
+COPY . .
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\README.md ===
+
+# ERP Ferreteria Backend
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\requirements.txt ===
+
+fastapi
+uvicorn[standard]
+sqlalchemy>=2.0
+psycopg2-binary
+alembic
+python-jose[cryptography]
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-dotenv
+pydantic-settings
+email-validator
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\env.py ===
+
+from logging.config import fileConfig
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+
+from alembic import context
+
+from app.db.base import Base
+from app.core.config import settings
+
+
+
+# this is the Alembic Config object, which provides
+# access to the values within the .ini file in use.
+config = context.config
+config.set_main_option("sqlalchemy.url", settings.database_url)
+
+
+# Interpret the config file for Python logging.
+# This line sets up loggers basically.
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
+target_metadata = Base.metadata
+
+
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
+
+
+def run_migrations_offline() -> None:
+    """Run migrations in 'offline' mode.
+
+    This configures the context with just a URL
+    and not an Engine, though an Engine is acceptable
+    here as well.  By skipping the Engine creation
+    we don't even need a DBAPI to be available.
+
+    Calls to context.execute() here emit the given string to the
+    script output.
+
+    """
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online() -> None:
+    """Run migrations in 'online' mode.
+
+    In this scenario we need to create an Engine
+    and associate a connection with the context.
+
+    """
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection, target_metadata=target_metadata
+        )
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\README ===
+
+Generic single-database configuration.
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\script.py.mako ===
+
+"""${message}
+
+Revision ID: ${up_revision}
+Revises: ${down_revision | comma,n}
+Create Date: ${create_date}
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+${imports if imports else ""}
+
+# revision identifiers, used by Alembic.
+revision: str = ${repr(up_revision)}
+down_revision: Union[str, Sequence[str], None] = ${repr(down_revision)}
+branch_labels: Union[str, Sequence[str], None] = ${repr(branch_labels)}
+depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    ${upgrades if upgrades else "pass"}
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    ${downgrades if downgrades else "pass"}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\085c1c187550_add_branch_to_sales.py ===
+
+"""add branch to sales
+
+Revision ID: 085c1c187550
+Revises: cbebe1f73d95
+Create Date: 2026-03-22 23:52:16.233856
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '085c1c187550'
+down_revision: Union[str, Sequence[str], None] = 'cbebe1f73d95'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_constraint(op.f('inventory_product_id_key'), 'inventory', type_='unique')
+    op.alter_column('users', 'branch_id',
+               existing_type=sa.INTEGER(),
+               nullable=True)
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.alter_column('users', 'branch_id',
+               existing_type=sa.INTEGER(),
+               nullable=False)
+    op.create_unique_constraint(op.f('inventory_product_id_key'), 'inventory', ['product_id'], postgresql_nulls_not_distinct=False)
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\18d9fc3200d4_add_branch_id_to_inventory_movements.py ===
+
+"""add branch_id to inventory_movements
+
+Revision ID: 18d9fc3200d4
+Revises: 417d67451363
+Create Date: 2026-04-04 19:00:06.839941
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '18d9fc3200d4'
+down_revision: Union[str, Sequence[str], None] = '417d67451363'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.add_column('inventory_movements', sa.Column('branch_id', sa.Integer(), nullable=False))
+    op.create_foreign_key(None, 'inventory_movements', 'branches', ['branch_id'], ['id'])
+    op.drop_constraint(op.f('sales_branch_id_fkey'), 'sales', type_='foreignkey')
+    op.drop_column('sales', 'branch_id')
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.add_column('sales', sa.Column('branch_id', sa.INTEGER(), autoincrement=False, nullable=False))
+    op.create_foreign_key(op.f('sales_branch_id_fkey'), 'sales', 'branches', ['branch_id'], ['id'])
+    op.drop_constraint(None, 'inventory_movements', type_='foreignkey')
+    op.drop_column('inventory_movements', 'branch_id')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\417d67451363_add_branch_id_to_sales.py ===
+
+"""add branch_id to sales
+
+Revision ID: 417d67451363
+Revises: ed3ecf1783ea
+Create Date: 2026-03-22 23:57:36.372906
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '417d67451363'
+down_revision: Union[str, Sequence[str], None] = 'ed3ecf1783ea'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    pass
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    pass
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\60e2aaedbf32_add_sales.py ===
+
+"""add sales
+
+Revision ID: 60e2aaedbf32
+Revises: df3a666ba552
+Create Date: 2026-02-08 01:57:49.404516
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '60e2aaedbf32'
+down_revision: Union[str, Sequence[str], None] = 'df3a666ba552'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('sales',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('total', sa.Float(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('sale_items',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sale_id', sa.Integer(), nullable=False),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('cost', sa.Float(), nullable=False),
+    sa.Column('profit', sa.Float(), nullable=False),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.ForeignKeyConstraint(['sale_id'], ['sales.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('sale_items')
+    op.drop_table('sales')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\68ee4d5e02b9_add_suppliers_and_product_suppliers.py ===
+
+"""add suppliers and product suppliers
+
+Revision ID: 68ee4d5e02b9
+Revises: ca90b7c71f2d
+Create Date: 2026-02-08 01:00:34.738138
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '68ee4d5e02b9'
+down_revision: Union[str, Sequence[str], None] = 'ca90b7c71f2d'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('suppliers',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=200), nullable=False),
+    sa.Column('credit_days', sa.Integer(), nullable=False),
+    sa.Column('delivery_days', sa.Integer(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('product_suppliers',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('supplier_id', sa.Integer(), nullable=False),
+    sa.Column('supplier_sku', sa.String(length=100), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('credit_days', sa.Integer(), nullable=False),
+    sa.Column('delivery_days', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.ForeignKeyConstraint(['supplier_id'], ['suppliers.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('product_suppliers')
+    op.drop_table('suppliers')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\83e9e00191e3_add_roles_and_permissions.py ===
+
+"""add roles and permissions
+
+Revision ID: 83e9e00191e3
+Revises: bbb57b6aceea
+Create Date: 2026-02-07 21:57:49.489677
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '83e9e00191e3'
+down_revision: Union[str, Sequence[str], None] = 'bbb57b6aceea'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('permissions',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('code', sa.String(length=100), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_permissions_code'), 'permissions', ['code'], unique=True)
+    op.create_table('roles',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_roles_name'), 'roles', ['name'], unique=True)
+    op.create_table('role_permissions',
+    sa.Column('role_id', sa.Integer(), nullable=False),
+    sa.Column('permission_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['permission_id'], ['permissions.id'], ),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
+    sa.PrimaryKeyConstraint('role_id', 'permission_id')
+    )
+    op.add_column('users', sa.Column('role_id', sa.Integer(), nullable=True))
+    op.create_foreign_key(None, 'users', 'roles', ['role_id'], ['id'])
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_constraint(None, 'users', type_='foreignkey')
+    op.drop_column('users', 'role_id')
+    op.drop_table('role_permissions')
+    op.drop_index(op.f('ix_roles_name'), table_name='roles')
+    op.drop_table('roles')
+    op.drop_index(op.f('ix_permissions_code'), table_name='permissions')
+    op.drop_table('permissions')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\91a20350df00_inventory_multi_branch.py ===
+
+"""inventory multi branch
+
+Revision ID: 91a20350df00
+Revises: 60e2aaedbf32
+Create Date: 2026-02-07
+"""
+
+from alembic import op
+import sqlalchemy as sa
+
+# 🔹 IDs de Alembic (OBLIGATORIOS)
+revision = "91a20350df00"
+down_revision = "60e2aaedbf32"
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    # 1️⃣ crear tabla branches
+    op.create_table(
+        "branches",
+        sa.Column("id", sa.Integer(), primary_key=True),
+        sa.Column("name", sa.String(length=100), nullable=False, unique=True),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.true()),
+    )
+
+    # 2️⃣ insertar sucursal por defecto
+    op.execute(
+        "INSERT INTO branches (name, is_active) VALUES ('Matriz', true)"
+    )
+
+    # 3️⃣ agregar branch_id PERMITIENDO NULL
+    op.add_column(
+        "inventory",
+        sa.Column("branch_id", sa.Integer(), nullable=True),
+    )
+
+    # 4️⃣ asignar branch_id = 1 a inventario existente
+    op.execute(
+        "UPDATE inventory SET branch_id = 1"
+    )
+
+    # 5️⃣ ahora sí hacerlo NOT NULL
+    op.alter_column(
+        "inventory",
+        "branch_id",
+        nullable=False,
+    )
+
+    # 6️⃣ foreign key
+    op.create_foreign_key(
+        "inventory_branch_fk",
+        "inventory",
+        "branches",
+        ["branch_id"],
+        ["id"],
+    )
+
+    # 7️⃣ unique constraint
+    op.create_unique_constraint(
+        "uq_inventory_branch_product",
+        "inventory",
+        ["branch_id", "product_id"],
+    )
+
+
+def downgrade():
+    op.drop_constraint("uq_inventory_branch_product", "inventory", type_="unique")
+    op.drop_constraint("inventory_branch_fk", "inventory", type_="foreignkey")
+    op.drop_column("inventory", "branch_id")
+    op.drop_table("branches")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\bbb57b6aceea_create_users_table.py ===
+
+"""create users table
+
+Revision ID: bbb57b6aceea
+Revises: 
+Create Date: 2026-02-07 21:53:35.791468
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'bbb57b6aceea'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=255), nullable=False),
+    sa.Column('hashed_password', sa.String(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(op.f('ix_users_email'), table_name='users')
+    op.drop_table('users')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\ca90b7c71f2d_add_inventory_and_kardex.py ===
+
+"""add inventory and kardex
+
+Revision ID: ca90b7c71f2d
+Revises: dfc754a60190
+Create Date: 2026-02-08 00:49:51.015763
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'ca90b7c71f2d'
+down_revision: Union[str, Sequence[str], None] = 'dfc754a60190'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('inventory',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('min_quantity', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('product_id')
+    )
+    op.create_table('inventory_movements',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('type', sa.String(length=20), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('reason', sa.String(length=100), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('inventory_movements')
+    op.drop_table('inventory')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\cbebe1f73d95_add_branch_to_users.py ===
+
+from alembic import op
+import sqlalchemy as sa
+
+revision = "cbebe1f73d95"
+down_revision = "91a20350df00"
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    # 1️⃣ agregar columna permitiendo NULL
+    op.add_column(
+        "users",
+        sa.Column("branch_id", sa.Integer(), nullable=True),
+    )
+
+    # 2️⃣ asignar sucursal Matriz a usuarios existentes
+    op.execute(
+        "UPDATE users SET branch_id = 1"
+    )
+
+    # 3️⃣ ahora sí NOT NULL
+    op.alter_column(
+        "users",
+        "branch_id",
+        nullable=False,
+    )
+
+    # 4️⃣ foreign key
+    op.create_foreign_key(
+        "users_branch_fk",
+        "users",
+        "branches",
+        ["branch_id"],
+        ["id"],
+    )
+
+
+def downgrade():
+    op.drop_constraint("users_branch_fk", "users", type_="foreignkey")
+    op.drop_column("users", "branch_id")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\df3a666ba552_add_payables.py ===
+
+"""add payables
+
+Revision ID: df3a666ba552
+Revises: ef78fa78b44a
+Create Date: 2026-02-08 01:31:52.289369
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'df3a666ba552'
+down_revision: Union[str, Sequence[str], None] = 'ef78fa78b44a'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('payables',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('supplier_id', sa.Integer(), nullable=False),
+    sa.Column('purchase_order_id', sa.Integer(), nullable=False),
+    sa.Column('amount', sa.Float(), nullable=False),
+    sa.Column('due_date', sa.Date(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['purchase_order_id'], ['purchase_orders.id'], ),
+    sa.ForeignKeyConstraint(['supplier_id'], ['suppliers.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('payables')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\dfc754a60190_add_products_and_categories.py ===
+
+"""add products and categories
+
+Revision ID: dfc754a60190
+Revises: 83e9e00191e3
+Create Date: 2026-02-08 00:38:17.092638
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'dfc754a60190'
+down_revision: Union[str, Sequence[str], None] = '83e9e00191e3'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('categories',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('margin', sa.Float(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_categories_name'), 'categories', ['name'], unique=True)
+    op.create_table('products',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sku', sa.String(length=50), nullable=False),
+    sa.Column('name', sa.String(length=200), nullable=False),
+    sa.Column('barcode', sa.String(length=100), nullable=True),
+    sa.Column('margin', sa.Float(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('barcode')
+    )
+    op.create_index(op.f('ix_products_name'), 'products', ['name'], unique=False)
+    op.create_index(op.f('ix_products_sku'), 'products', ['sku'], unique=True)
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(op.f('ix_products_sku'), table_name='products')
+    op.drop_index(op.f('ix_products_name'), table_name='products')
+    op.drop_table('products')
+    op.drop_index(op.f('ix_categories_name'), table_name='categories')
+    op.drop_table('categories')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\ed3ecf1783ea_add_branch_id_to_sales.py ===
+
+"""add branch_id to sales
+
+Revision ID: ed3ecf1783ea
+Revises: 085c1c187550
+Create Date: 2026-03-22 23:54:01.377149
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'ed3ecf1783ea'
+down_revision: Union[str, Sequence[str], None] = '085c1c187550'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.add_column('sales', sa.Column('branch_id', sa.Integer(), nullable=False))
+    op.create_foreign_key(None, 'sales', 'branches', ['branch_id'], ['id'])
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_constraint(None, 'sales', type_='foreignkey')
+    op.drop_column('sales', 'branch_id')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\alembic\versions\ef78fa78b44a_add_purchase_orders.py ===
+
+"""add purchase orders
+
+Revision ID: ef78fa78b44a
+Revises: 68ee4d5e02b9
+Create Date: 2026-02-08 01:23:42.509850
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = 'ef78fa78b44a'
+down_revision: Union[str, Sequence[str], None] = '68ee4d5e02b9'
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('purchase_orders',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('supplier_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['supplier_id'], ['suppliers.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('purchase_order_items',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('order_id', sa.Integer(), nullable=False),
+    sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('supplier_sku', sa.String(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('quantity_ordered', sa.Integer(), nullable=False),
+    sa.Column('quantity_received', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['order_id'], ['purchase_orders.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('purchase_order_items')
+    op.drop_table('purchase_orders')
+    # ### end Alembic commands ###
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\main.py ===
+
+from fastapi import FastAPI
+from app.core.config import settings
+
+from app.modules.auth.router import router as auth_router
+from app.modules.users.router import router as users_router
+from app.modules.products.router import router as products_router
+from app.modules.inventory.router import router as inventory_router
+from app.modules.suppliers.router import router as suppliers_router
+from app.modules.purchases.router import router as purchases_router
+from app.modules.finance.router import router as finance_router
+from app.modules.sales.router import router as sales_router
+from app.modules.reports.router import router as reports_router
+
+app = FastAPI(
+    title=settings.app_name,
+    debug=settings.debug,
+    swagger_ui_init_oauth={
+        "usePkceWithAuthorizationCodeGrant": False
+    }
+)
+
+# --------------------------------------------------
+# Healthcheck
+# --------------------------------------------------
+@app.get("/health", tags=["Health"])
+def health_check():
+    return {"status": "ok"}
+
+
+# --------------------------------------------------
+# Routers
+# --------------------------------------------------
+app.include_router(auth_router)
+app.include_router(users_router)
+app.include_router(products_router)
+app.include_router(inventory_router)
+app.include_router(suppliers_router)
+app.include_router(purchases_router)
+app.include_router(finance_router)
+app.include_router(sales_router)
+app.include_router(reports_router)
+
+
+# --------------------------------------------------
+# Startup
+# --------------------------------------------------
+@app.on_event("startup")
+def startup_event():
+    """
+    IMPORTANTE:
+    - NO ejecutar seeds aquí
+    - NO ejecutar migraciones aquí
+    - Startup debe ser SIEMPRE liviano y seguro
+    """
+    pass
+
+#PARCHADO/ MODIFICADO LA PARTE DE APP/MAIN / STARTUPEVENT 
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\core\branch_models.py ===
+
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.registry import Base
+
+
+class Branch(Base):
+    __tablename__ = "branches"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\core\config.py ===
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    app_name: str
+    env: str
+    debug: bool
+
+    secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int
+
+    database_url: str
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"  # 👈 CLAVE
+    )
+
+
+settings = Settings()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\core\dependencies.py ===
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.db.session import get_db
+from app.modules.users.models import User
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def get_current_user(
+    oauth_token: str | None = Depends(oauth2_scheme),
+    bearer: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    db: Session = Depends(get_db),
+) -> User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+    )
+
+    # 🔑 PRIORIDAD: Bearer manual > OAuth2
+    token = None
+    if bearer:
+        token = bearer.credentials
+    elif oauth_token:
+        token = oauth_token
+
+    if not token:
+        raise credentials_exception
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=[settings.algorithm],
+        )
+        user_id: str | None = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    user = db.get(User, int(user_id))
+    if not user or not user.is_active:
+        raise credentials_exception
+
+    return user
+
+
+def require_role(*roles: str):
+    def role_checker(user: User = Depends(get_current_user)):
+        if not user.role or user.role.name not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient role",
+            )
+        return user
+
+    return role_checker
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\core\security.py ===
+
+from datetime import datetime, timedelta
+from jose import jwt
+from passlib.context import CryptContext
+
+from app.core.config import settings
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def create_access_token(subject: str) -> str:
+    expire = datetime.utcnow() + timedelta(
+        minutes=settings.access_token_expire_minutes
+    )
+    to_encode = {
+        "sub": subject,
+        "exp": expire,
+    }
+    return jwt.encode(
+        to_encode,
+        settings.secret_key,
+        algorithm=settings.algorithm,
+    )
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\db\base.py ===
+
+from app.db.registry import Base
+
+# Users & Auth
+from app.modules.users.models import User  # noqa
+from app.modules.users.roles_models import Role, Permission  # noqa
+
+# Core business
+from app.modules.branches.models import Branch  # noqa
+
+# Products & Inventory
+from app.modules.products.models import Product, Category  # noqa
+from app.modules.inventory.models import Inventory, InventoryMovement  # noqa
+
+# Suppliers & Purchases
+from app.modules.suppliers.models import Supplier, ProductSupplier  # noqa
+from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem  # noqa
+
+# Finance
+from app.modules.finance.models import Payable  # noqa
+
+# Sales
+from app.modules.sales.models import Sale, SaleItem  # noqa
+
+
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\db\registry.py ===
+
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    pass
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\db\session.py ===
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
+from sqlalchemy.orm import Session
+
+engine = create_engine(settings.database_url, future=True)
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False,
+    future=True,
+)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\db\seeds\initial_data.py ===
+
+from sqlalchemy.orm import Session
+
+from app.modules.users.models import User
+from app.modules.users.roles_models import Role, Permission
+from app.modules.branches.models import Branch
+from app.core.security import hash_password
+
+
+def seed_roles(db: Session):
+    roles = ["Admin", "Gerente", "Vendedor", "Almacen"]
+
+    existing = {r.name for r in db.query(Role).all()}
+
+    for role_name in roles:
+        if role_name not in existing:
+            db.add(Role(name=role_name))
+
+    db.commit()
+
+
+def seed_permissions(db: Session):
+    permissions = [
+        # Products
+        "products:view",
+        "products:create",
+        "products:update",
+        "products:delete",
+        # Inventory
+        "inventory:view",
+        "inventory:update",
+        # Sales
+        "sales:create",
+        "sales:view",
+        # Purchases
+        "purchases:create",
+        "purchases:view",
+        # Reports
+        "reports:view",
+        "reports:financial",
+    ]
+
+    existing = {p.code for p in db.query(Permission).all()}
+
+    for code in permissions:
+        if code not in existing:
+            db.add(Permission(code=code))
+
+    db.commit()
+
+
+def seed_branch(db: Session):
+    branch = db.query(Branch).filter(Branch.name == "Matriz").first()
+    if not branch:
+        db.add(Branch(name="Matriz", is_active=True))
+        db.commit()
+
+
+def seed_admin(db: Session):
+    admin_email = "admin@erp.com"
+
+    admin = db.query(User).filter(User.email == admin_email).first()
+    if admin:
+        return
+
+    admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    if not admin_role:
+        raise RuntimeError("Seed error: Admin role not found")
+
+    branch = db.query(Branch).filter(Branch.name == "Matriz").first()
+    if not branch:
+        raise RuntimeError("Seed error: Matriz branch not found")
+
+    admin = User(
+        email=admin_email,
+        hashed_password=hash_password("admin123"),
+        is_active=True,
+        is_superuser=True,
+        role_id=admin_role.id,
+        branch_id=branch.id,
+    )
+
+    db.add(admin)
+    db.commit()
+
+
+
+def run_seeds(db: Session):
+    seed_roles(db)
+    seed_permissions(db)
+    seed_branch(db)
+    seed_admin(db)
+if __name__ == "__main__":
+    from app.db.session import SessionLocal
+
+    db = SessionLocal()
+    try:
+        run_seeds(db)
+        print("✔ Seeds ejecutados correctamente")
+    finally:
+        db.close()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\auth\router.py ===
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.modules.users.models import User
+from app.modules.auth.schemas import LoginRequest, Token
+from app.core.security import verify_password, create_access_token
+
+router = APIRouter(prefix="/auth", tags=["Auth"])
+
+
+@router.post("/login", response_model=Token)
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == data.email).first()
+
+    if not user or not verify_password(data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inactive user",
+        )
+
+    token = create_access_token(subject=str(user.id))
+    return {"access_token": token}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\auth\schemas.py ===
+
+from pydantic import BaseModel, EmailStr
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\branches\models.py ===
+
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.registry import Base
+
+
+class Branch(Base):
+    __tablename__ = "branches"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\branches\__init__.py ===
+
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\finance\models.py ===
+
+from datetime import datetime, date
+
+from sqlalchemy import ForeignKey, Float, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class Payable(Base):
+    __tablename__ = "payables"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"))
+    purchase_order_id: Mapped[int] = mapped_column(ForeignKey("purchase_orders.id"))
+
+    amount: Mapped[float]
+    due_date: Mapped[date]
+
+    status: Mapped[str] = mapped_column(String(20), default="PENDIENTE")
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    supplier = relationship("Supplier")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\finance\repository.py ===
+
+from sqlalchemy.orm import Session
+from app.modules.finance.models import Payable
+
+
+def create_payable(db: Session, payable: Payable):
+    db.add(payable)
+    db.commit()
+    db.refresh(payable)
+    return payable
+
+
+def list_payables(db: Session):
+    return db.query(Payable).all()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\finance\router.py ===
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import require_role
+from app.modules.finance import repository, service
+from app.modules.finance.models import Payable
+from app.modules.finance.schemas import PayableResponse
+from fastapi import HTTPException
+
+router = APIRouter(prefix="/finance", tags=["Finance"])
+
+
+@router.get("/payables", response_model=list[PayableResponse])
+def list_payables(
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    payables = repository.list_payables(db)
+    for p in payables:
+        service.update_status(p)
+    db.commit()
+    return payables
+
+
+@router.post("/payables/{payable_id}/pay")
+def pay_payable(
+    payable_id: int,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    payable = db.get(Payable, payable_id)
+
+    if not payable:
+        raise HTTPException(
+            status_code=404,
+            detail="Payable not found"
+        )
+
+    # 🔒 Regla ERP: no se puede pagar dos veces
+    if payable.status == "PAGADO":
+        raise HTTPException(
+            status_code=400,
+            detail="Payable already paid"
+        )
+
+    payable.status = "PAGADO"
+    db.commit()
+
+    return {"status": "paid"}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\finance\schemas.py ===
+
+from datetime import date
+from pydantic import BaseModel
+
+
+class PayableResponse(BaseModel):
+    id: int
+    supplier_id: int
+    purchase_order_id: int
+    amount: float
+    due_date: date
+    status: str
+
+    class Config:
+        from_attributes = True
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\finance\service.py ===
+
+from datetime import timedelta, date
+from sqlalchemy.orm import Session
+
+from app.modules.finance.models import Payable
+from app.modules.purchases.models import PurchaseOrder
+
+
+def create_payable_from_order(
+    db: Session,
+    order: PurchaseOrder,
+    amount: float,
+    credit_days: int,
+):
+    due_date = date.today() + timedelta(days=credit_days)
+
+    payable = Payable(
+        supplier_id=order.supplier_id,
+        purchase_order_id=order.id,
+        amount=amount,
+        due_date=due_date,
+    )
+
+    db.add(payable)
+    db.commit()
+    return payable
+
+
+def update_status(payable: Payable):
+    if payable.status == "PAGADO":
+        return payable.status
+
+    if date.today() > payable.due_date:
+        payable.status = "VENCIDO"
+    else:
+        payable.status = "PENDIENTE"
+
+    return payable.status
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\inventory\models.py ===
+
+from datetime import datetime
+
+from sqlalchemy import (
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class Inventory(Base):
+    __tablename__ = "inventory"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    branch_id: Mapped[int] = mapped_column(
+        ForeignKey("branches.id"),
+        nullable=False,
+    )
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id"),
+        nullable=False,
+    )
+
+    quantity: Mapped[int] = mapped_column(Integer, default=0)
+    min_quantity: Mapped[int] = mapped_column(Integer, default=0)
+
+    __table_args__ = (
+        UniqueConstraint("branch_id", "product_id"),
+    )
+
+    product = relationship("Product")
+
+
+class InventoryMovement(Base):
+    __tablename__ = "inventory_movements"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id"),
+        nullable=False,
+    )
+
+    branch_id: Mapped[int] = mapped_column(  # ✅ agregado (importante)
+        ForeignKey("branches.id"),
+        nullable=False,
+    )
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    type: Mapped[str] = mapped_column(String(20))  # IN / OUT
+    quantity: Mapped[int]
+    reason: Mapped[str] = mapped_column(String(100))
+
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    product = relationship("Product")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\inventory\repository.py ===
+
+from sqlalchemy.orm import Session
+
+from app.modules.inventory.models import Inventory, InventoryMovement
+
+
+def get_inventory_by_product(db: Session, product_id: int):
+    return db.query(Inventory).filter(Inventory.product_id == product_id).first()
+
+
+def create_inventory(db: Session, inventory: Inventory):
+    db.add(inventory)
+    db.commit()
+    db.refresh(inventory)
+    return inventory
+
+
+def update_inventory(db: Session, inventory: Inventory):
+    db.commit()
+    db.refresh(inventory)
+    return inventory
+
+
+def create_movement(db: Session, movement: InventoryMovement):
+    db.add(movement)
+    db.commit()
+    return movement
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\inventory\router.py ===
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import get_current_user, require_role
+from app.modules.inventory import service
+from app.modules.inventory.models import Inventory
+from app.modules.inventory.schemas import (
+    InventoryCreate,
+    InventoryResponse,
+    InventoryMovementCreate,
+)
+
+router = APIRouter(prefix="/inventory", tags=["Inventory"])
+
+
+@router.post("", response_model=InventoryResponse)
+def create_inventory_endpoint(
+    data: InventoryCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Almacen")),
+):
+    # ✅ VALIDACIÓN NUEVA (IMPORTANTE)
+    existing = db.query(Inventory).filter_by(
+        product_id=data.product_id,
+        branch_id=data.branch_id
+    ).first()
+
+    if existing:
+        raise HTTPException(400, "Inventory already exists")
+
+    inventory = Inventory(
+        product_id=data.product_id,
+        branch_id=data.branch_id,
+        min_quantity=data.min_quantity,
+        quantity=0,
+    )
+
+    db.add(inventory)
+    db.commit()
+    db.refresh(inventory)
+    return inventory
+
+
+@router.post("/in", response_model=InventoryResponse)
+def add_stock_endpoint(
+    data: InventoryMovementCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return service.add_stock(
+        db=db,
+        product_id=data.product_id,
+        branch_id=data.branch_id,
+        quantity=data.quantity,
+        user_id=user.id,
+        reason=data.reason,
+    )
+
+
+@router.post("/out", response_model=InventoryResponse)
+def remove_stock_endpoint(
+    data: InventoryMovementCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    return service.remove_stock(
+        db=db,
+        product_id=data.product_id,
+        branch_id=data.branch_id,
+        quantity=data.quantity,
+        user_id=user.id,
+        reason=data.reason,
+    )
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\inventory\schemas.py ===
+
+from pydantic import BaseModel
+
+
+class InventoryCreate(BaseModel):
+    product_id: int
+    branch_id: int
+    min_quantity: int = 0
+
+
+class InventoryResponse(BaseModel):
+    product_id: int
+    branch_id: int
+    quantity: int
+    min_quantity: int
+
+    class Config:
+        from_attributes = True
+
+
+class InventoryMovementCreate(BaseModel):
+    product_id: int
+    branch_id: int
+    quantity: int
+    reason: str
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\inventory\service.py ===
+
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.modules.inventory.models import Inventory, InventoryMovement
+
+
+def add_stock(
+    db: Session,
+    product_id: int,
+    branch_id: int,
+    quantity: int,
+    user_id: int,
+    reason: str,
+):
+    inventory = db.query(Inventory).filter_by(
+        product_id=product_id,
+        branch_id=branch_id,
+    ).first()
+
+    if not inventory:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+
+    inventory.quantity += quantity
+
+    movement = InventoryMovement(
+        product_id=product_id,
+        branch_id=branch_id,  # ✅ FIX
+        user_id=user_id,
+        type="IN",
+        quantity=quantity,
+        reason=reason,
+    )
+
+    db.add(movement)
+    db.commit()
+    db.refresh(inventory)
+    return inventory
+
+
+def remove_stock(
+    db: Session,
+    product_id: int,
+    branch_id: int,
+    quantity: int,
+    user_id: int,
+    reason: str,
+):
+    inventory = db.query(Inventory).filter_by(
+        product_id=product_id,
+        branch_id=branch_id,
+    ).first()
+
+    if not inventory:
+        raise HTTPException(
+            status_code=404,
+            detail="Inventory not found",
+        )
+
+    if inventory.quantity < quantity:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Insufficient stock",
+        )
+
+    inventory.quantity -= quantity
+
+    movement = InventoryMovement(
+        product_id=product_id,
+        branch_id=branch_id,  # ✅ FIX
+        user_id=user_id,
+        type="OUT",
+        quantity=quantity,
+        reason=reason,
+    )
+
+    db.add(movement)
+    db.commit()
+    db.refresh(inventory)
+    return inventory
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\products\models.py ===
+
+from sqlalchemy import String, Float, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+    margin: Mapped[float | None] = mapped_column(Float)
+
+    products = relationship("Product", back_populates="category")
+
+
+class Product(Base):
+    __tablename__ = "products"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    sku: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(200), index=True)
+
+    barcode: Mapped[str | None] = mapped_column(String(100), unique=True)
+    margin: Mapped[float | None] = mapped_column(Float)
+
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
+    category = relationship("Category", back_populates="products")
+
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\products\repository.py ===
+
+from sqlalchemy.orm import Session
+
+from app.modules.products.models import Product, Category
+
+
+def create_category(db: Session, category: Category):
+    db.add(category)
+    db.commit()
+    db.refresh(category)
+    return category
+
+
+def create_product(db: Session, product: Product):
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    return product
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\products\router.py ===
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import require_role
+from app.modules.products import repository, service
+from app.modules.products.models import Product, Category
+from app.modules.products.schemas import (
+    CategoryCreate,
+    CategoryResponse,
+    ProductCreate,
+    ProductResponse,
+)
+
+router = APIRouter(prefix="/products", tags=["Products"])
+
+
+@router.post("/categories", response_model=CategoryResponse)
+def create_category_endpoint(
+    data: CategoryCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    category = Category(**data.dict())
+    return repository.create_category(db, category)
+
+
+@router.post("", response_model=ProductResponse)
+def create_product_endpoint(
+    data: ProductCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    sku = service.generate_sku()
+
+    product = Product(
+        sku=sku,
+        name=data.name,
+        barcode=data.barcode,
+        margin=data.margin,
+        category_id=data.category_id,
+    )
+
+    return repository.create_product(db, product)
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\products\schemas.py ===
+
+from pydantic import BaseModel
+
+
+class CategoryCreate(BaseModel):
+    name: str
+    margin: float | None = None
+
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
+    margin: float | None
+
+    class Config:
+        from_attributes = True
+
+
+class ProductCreate(BaseModel):
+    name: str
+    category_id: int
+    barcode: str | None = None
+    margin: float | None = None
+
+
+class ProductResponse(BaseModel):
+    id: int
+    sku: str
+    name: str
+    barcode: str | None
+    margin: float | None
+    category_id: int
+
+    class Config:
+        from_attributes = True
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\products\service.py ===
+
+import uuid
+
+from app.modules.products.models import Product, Category
+
+
+def generate_sku() -> str:
+    return f"SKU-{uuid.uuid4().hex[:8].upper()}"
+
+
+def resolve_margin(product: Product) -> float | None:
+    if product.margin is not None:
+        return product.margin
+    if product.category and product.category.margin is not None:
+        return product.category.margin
+    return None
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\purchases\models.py ===
+
+from datetime import datetime
+
+from sqlalchemy import ForeignKey, String, Integer, Float
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class PurchaseOrder(Base):
+    __tablename__ = "purchase_orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"))
+    status: Mapped[str] = mapped_column(String(20), default="PEDIDO")
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    items = relationship("PurchaseOrderItem", back_populates="order")
+
+
+class PurchaseOrderItem(Base):
+    __tablename__ = "purchase_order_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    order_id: Mapped[int] = mapped_column(ForeignKey("purchase_orders.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+
+    supplier_sku: Mapped[str]
+    price: Mapped[float]
+
+    quantity_ordered: Mapped[int]
+    quantity_received: Mapped[int] = mapped_column(default=0)
+
+    order = relationship("PurchaseOrder", back_populates="items")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\purchases\repository.py ===
+
+from sqlalchemy.orm import Session
+from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem
+
+
+def create_order(db: Session, order: PurchaseOrder):
+    db.add(order)
+    db.commit()
+    db.refresh(order)
+    return order
+
+
+def create_order_item(db: Session, item: PurchaseOrderItem):
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\purchases\router.py ===
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import get_current_user, require_role
+from app.modules.purchases import repository, service
+from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem
+from app.modules.purchases.schemas import (
+    PurchaseOrderCreate,
+    PurchaseReceiveItem,
+)
+
+router = APIRouter(prefix="/purchases", tags=["Purchases"])
+
+
+@router.post("", response_model=dict)
+def create_purchase_order(
+    data: PurchaseOrderCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    order = PurchaseOrder(supplier_id=data.supplier_id)
+    repository.create_order(db, order)
+
+    for item in data.items:
+        po_item = PurchaseOrderItem(
+            order_id=order.id,
+            product_id=item.product_id,
+            supplier_sku=item.supplier_sku,
+            price=item.price,
+            quantity_ordered=item.quantity,
+        )
+        repository.create_order_item(db, po_item)
+
+    return {"order_id": order.id}
+
+
+@router.post("/{order_id}/receive")
+def receive_purchase(
+    order_id: int,
+    items: list[PurchaseReceiveItem],
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    order = db.get(PurchaseOrder, order_id)
+    service.receive_items(db, order, items, user.id)
+    return {"status": order.status}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\purchases\schemas.py ===
+
+from pydantic import BaseModel
+
+
+class PurchaseItemCreate(BaseModel):
+    product_id: int
+    supplier_sku: str
+    price: float
+    quantity: int
+
+
+class PurchaseOrderCreate(BaseModel):
+    supplier_id: int
+    items: list[PurchaseItemCreate]
+
+
+class PurchaseReceiveItem(BaseModel):
+    item_id: int
+    quantity_received: int
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\purchases\service.py ===
+
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from app.modules.purchases.models import PurchaseOrder, PurchaseOrderItem
+from app.modules.inventory.service import add_stock
+from app.modules.finance.service import create_payable_from_order
+from app.modules.suppliers.models import Supplier
+
+
+def receive_items(
+    db: Session,
+    order: PurchaseOrder,
+    items: list,
+    user_id: int,
+):
+    for data in items:
+        item = db.get(PurchaseOrderItem, data.item_id)
+
+        if not item or item.order_id != order.id:
+            raise HTTPException(status_code=404, detail="Invalid item")
+
+        pending = item.quantity_ordered - item.quantity_received
+        if data.quantity_received > pending:
+            raise HTTPException(status_code=400, detail="Over receiving")
+
+        item.quantity_received += data.quantity_received
+
+        add_stock(
+            db=db,
+            product_id=item.product_id,
+            quantity=data.quantity_received,
+            user_id=user_id,
+            reason=f"Compra #{order.id}",
+        )
+
+    # 🔁 Actualizar estado de la orden
+    if all(i.quantity_received == i.quantity_ordered for i in order.items):
+        order.status = "COMPLETO"
+
+        # 🔥 PASO 61 — crear payable automáticamente
+        supplier = db.get(Supplier, order.supplier_id)
+
+        total = sum(
+            i.price * i.quantity_ordered
+            for i in order.items
+        )
+
+        create_payable_from_order(
+            db=db,
+            order=order,
+            amount=total,
+            credit_days=supplier.credit_days,
+        )
+
+    else:
+        order.status = "PARCIAL"
+
+    db.commit()
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\reports\router.py ===
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import require_role
+from app.modules.reports import service
+
+router = APIRouter(prefix="/reports", tags=["Reports"])
+
+
+@router.get("/top-products")
+def top_products(
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    data = service.top_selling_products(db, limit)
+    return [
+        {"product": name, "total_sold": total}
+        for name, total in data
+    ]
+
+
+@router.get("/low-products")
+def low_products(
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    data = service.least_selling_products(db, limit)
+    return [
+        {"product": name, "total_sold": total}
+        for name, total in data
+    ]
+
+
+@router.get("/profit")
+def profit(
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    return {
+        "total_profit": service.total_profit(db)
+    }
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\reports\service.py ===
+
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+from app.modules.sales.models import SaleItem
+from app.modules.products.models import Product
+
+
+def top_selling_products(db: Session, limit: int = 10):
+    return (
+        db.query(
+            Product.name,
+            func.sum(SaleItem.quantity).label("total_sold"),
+        )
+        .join(SaleItem, SaleItem.product_id == Product.id)
+        .group_by(Product.name)
+        .order_by(func.sum(SaleItem.quantity).desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def least_selling_products(db: Session, limit: int = 10):
+    return (
+        db.query(
+            Product.name,
+            func.sum(SaleItem.quantity).label("total_sold"),
+        )
+        .join(SaleItem, SaleItem.product_id == Product.id)
+        .group_by(Product.name)
+        .order_by(func.sum(SaleItem.quantity))
+        .limit(limit)
+        .all()
+    )
+
+
+def total_profit(db: Session):
+    return (
+        db.query(func.sum(SaleItem.profit))
+        .scalar()
+    ) or 0
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\sales\models.py ===
+
+from datetime import datetime
+
+from sqlalchemy import ForeignKey, Float, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class Sale(Base):
+    __tablename__ = "sales"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    total: Mapped[float]
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    items = relationship("SaleItem", back_populates="sale")
+
+
+class SaleItem(Base):
+    __tablename__ = "sale_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    sale_id: Mapped[int] = mapped_column(ForeignKey("sales.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+
+    quantity: Mapped[int]
+    price: Mapped[float]   # precio venta
+    cost: Mapped[float]    # costo real
+    profit: Mapped[float]
+
+    sale = relationship("Sale", back_populates="items")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\sales\repository.py ===
+
+from sqlalchemy.orm import Session
+from app.modules.sales.models import Sale, SaleItem
+
+
+def create_sale(db: Session, sale: Sale):
+    db.add(sale)
+    db.commit()
+    db.refresh(sale)
+    return sale
+
+
+def create_sale_item(db: Session, item: SaleItem):
+    db.add(item)
+    db.commit()
+    return item
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\sales\router.py ===
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import get_current_user
+from app.modules.sales import service
+from app.modules.sales.schemas import SaleCreate, SaleResponse
+
+router = APIRouter(prefix="/sales", tags=["Sales"])
+
+
+@router.post("", response_model=SaleResponse)
+def create_sale(
+    data: SaleCreate,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    sale = service.process_sale(
+        db=db,
+        items=data.items,
+        user_id=user.id,
+    )
+    return sale
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\sales\schemas.py ===
+
+from pydantic import BaseModel
+
+
+class SaleItemCreate(BaseModel):
+    barcode: str
+    quantity: int
+
+
+class SaleCreate(BaseModel):
+    items: list[SaleItemCreate]
+
+
+class SaleResponse(BaseModel):
+    id: int
+    total: float
+
+    class Config:
+        from_attributes = True
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\sales\service.py ===
+
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from app.modules.products.models import Product
+from app.modules.inventory.service import remove_stock
+from app.modules.sales.models import Sale, SaleItem
+from app.modules.products.service import resolve_margin
+from app.modules.suppliers.models import ProductSupplier
+
+
+def process_sale(
+    db: Session,
+    items: list,
+    user_id: int,
+):
+    sale = Sale(user_id=user_id, total=0)
+    db.add(sale)
+    db.commit()
+    db.refresh(sale)
+
+    total = 0
+
+    for data in items:
+        product = (
+            db.query(Product)
+            .filter(Product.barcode == data.barcode)
+            .first()
+        )
+
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        # costo: último precio proveedor
+        ps = (
+            db.query(ProductSupplier)
+            .filter(ProductSupplier.product_id == product.id)
+            .order_by(ProductSupplier.created_at.desc())
+            .first()
+        )
+
+        if not ps:
+            raise HTTPException(status_code=400, detail="No supplier price")
+
+        margin = resolve_margin(product) or 0
+        price = ps.price * (1 + margin / 100)
+        cost = ps.price
+
+        remove_stock(
+            db=db,
+            product_id=product.id,
+            quantity=data.quantity,
+            user_id=user_id,
+            reason=f"Venta #{sale.id}",
+        )
+
+        profit = (price - cost) * data.quantity
+        total += price * data.quantity
+
+        sale_item = SaleItem(
+            sale_id=sale.id,
+            product_id=product.id,
+            quantity=data.quantity,
+            price=price,
+            cost=cost,
+            profit=profit,
+        )
+
+        db.add(sale_item)
+
+    sale.total = total
+    db.commit()
+    return sale
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\suppliers\models.py ===
+
+from datetime import datetime
+
+from sqlalchemy import String, Float, ForeignKey, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+
+class Supplier(Base):
+    __tablename__ = "suppliers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), unique=True)
+    credit_days: Mapped[int] = mapped_column(Integer, default=0)
+    delivery_days: Mapped[int] = mapped_column(Integer, default=0)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+
+class ProductSupplier(Base):
+    __tablename__ = "product_suppliers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+    supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"))
+
+    supplier_sku: Mapped[str] = mapped_column(String(100))
+    price: Mapped[float]
+    credit_days: Mapped[int]
+    delivery_days: Mapped[int]
+
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    product = relationship("Product")
+    supplier = relationship("Supplier")
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\suppliers\repository.py ===
+
+from sqlalchemy.orm import Session
+from app.modules.suppliers.models import Supplier, ProductSupplier
+
+
+def create_supplier(db: Session, supplier: Supplier):
+    db.add(supplier)
+    db.commit()
+    db.refresh(supplier)
+    return supplier
+
+
+def create_product_supplier(db: Session, ps: ProductSupplier):
+    db.add(ps)
+    db.commit()
+    db.refresh(ps)
+    return ps
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\suppliers\router.py ===
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db.session import get_db
+from app.core.dependencies import require_role
+from app.modules.suppliers import repository
+from app.modules.suppliers.models import Supplier, ProductSupplier
+from app.modules.suppliers.schemas import (
+    SupplierCreate,
+    SupplierResponse,
+    ProductSupplierCreate,
+)
+
+router = APIRouter(prefix="/suppliers", tags=["Suppliers"])
+
+
+@router.post("", response_model=SupplierResponse)
+def create_supplier_endpoint(
+    data: SupplierCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    supplier = Supplier(**data.dict())
+    return repository.create_supplier(db, supplier)
+
+
+@router.post("/product", response_model=dict)
+def link_product_supplier(
+    data: ProductSupplierCreate,
+    db: Session = Depends(get_db),
+    user=Depends(require_role("Admin", "Gerente")),
+):
+    ps = ProductSupplier(**data.dict())
+    repository.create_product_supplier(db, ps)
+    return {"status": "linked"}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\suppliers\schemas.py ===
+
+from pydantic import BaseModel
+
+
+class SupplierCreate(BaseModel):
+    name: str
+    credit_days: int = 0
+    delivery_days: int = 0
+
+
+class SupplierResponse(BaseModel):
+    id: int
+    name: str
+    credit_days: int
+    delivery_days: int
+
+    class Config:
+        from_attributes = True
+
+
+class ProductSupplierCreate(BaseModel):
+    product_id: int
+    supplier_id: int
+    supplier_sku: str
+    price: float
+    credit_days: int
+    delivery_days: int
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\users\models.py ===
+
+from app.modules.branches.models import Branch
+from sqlalchemy import Boolean, String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.db.registry import Base
+from app.modules.users.roles_models import Role
+
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    hashed_password: Mapped[str]
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    role_id: Mapped[int | None] = mapped_column(ForeignKey("roles.id"))
+    role = relationship("Role")
+
+    # ✅ NUEVO (PASO A5)
+    branch_id: Mapped[int | None] = mapped_column(
+        ForeignKey("branches.id"),
+        nullable=True,
+    )
+
+    branch = relationship(Branch)
+
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\users\roles_models.py ===
+
+from sqlalchemy import String, Table, Column, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db.registry import Base
+
+# tabla intermedia role <-> permission
+role_permissions = Table(
+    "role_permissions",
+    Base.metadata,
+    Column("role_id", ForeignKey("roles.id"), primary_key=True),
+    Column("permission_id", ForeignKey("permissions.id"), primary_key=True),
+)
+
+
+class Role(Base):
+    __tablename__ = "roles"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+
+    permissions: Mapped[list["Permission"]] = relationship(
+        "Permission",
+        secondary=role_permissions,
+        back_populates="roles",
+    )
+
+
+class Permission(Base):
+    __tablename__ = "permissions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+
+    roles: Mapped[list[Role]] = relationship(
+        "Role",
+        secondary=role_permissions,
+        back_populates="permissions",
+    )
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\users\router.py ===
+
+from fastapi import APIRouter, Depends
+
+from app.core.dependencies import get_current_user, require_role
+from app.modules.users.models import User
+
+router = APIRouter(prefix="/users", tags=["Users"])
+
+
+@router.get("/me")
+def read_me(user: User = Depends(get_current_user)):
+    return {
+        "id": user.id,
+        "email": user.email,
+        "role": user.role.name if user.role else None,
+    }
+
+
+@router.get("/admin-only")
+def admin_only(
+    user: User = Depends(require_role("Admin")),
+):
+    return {"message": "Welcome admin"}
+
+=== Archivo: C:\Users\orlan\erp-ferreteria-backend\app\modules\users\schemas.py ===
+

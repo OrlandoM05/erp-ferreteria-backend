@@ -24,6 +24,7 @@ def add_stock(
 
     movement = InventoryMovement(
         product_id=product_id,
+        branch_id=branch_id,  # ✅ FIX
         user_id=user_id,
         type="IN",
         quantity=quantity,
@@ -65,6 +66,7 @@ def remove_stock(
 
     movement = InventoryMovement(
         product_id=product_id,
+        branch_id=branch_id,  # ✅ FIX
         user_id=user_id,
         type="OUT",
         quantity=quantity,
