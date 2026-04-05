@@ -3,12 +3,13 @@ import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
-import RoleRoute from "./RoleRoute"; // 🔥 NUEVO
+import RoleRoute from "./RoleRoute";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales";
 import Inventory from "../pages/Inventory";
 import Purchases from "../pages/Purchases";
 import Reports from "../pages/Reports";
+import Users from "../pages/Users"; // ✅ AÑADIDO
 
 export default function AppRouter() {
   return (
@@ -50,6 +51,16 @@ export default function AppRouter() {
                     element={
                       <RoleRoute roles={["Admin", "Gerente"]}>
                         <Reports />
+                      </RoleRoute>
+                    }
+                  />
+
+                  {/* 🔐 SOLO ADMIN (NUEVO) */}
+                  <Route
+                    path="/users"
+                    element={
+                      <RoleRoute roles={["Admin"]}>
+                        <Users />
                       </RoleRoute>
                     }
                   />

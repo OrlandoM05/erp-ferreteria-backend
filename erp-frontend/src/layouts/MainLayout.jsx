@@ -46,6 +46,13 @@ export default function MainLayout({ children }) {
             </Link>
           )}
 
+          {/* 🔐 SOLO ADMIN (NUEVO) */}
+          {user?.role === "Admin" && (
+            <Link to="/users" className="hover:text-orange-400">
+              Usuarios
+            </Link>
+          )}
+
         </nav>
       </aside>
 
