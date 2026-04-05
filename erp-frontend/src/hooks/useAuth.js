@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../api/api";
 
 export default function useAuth() {
-  const [user, setUser] = useState(undefined); // 🔥 CLAVE
+  const [user, setUser] = useState(undefined); // undefined = loading
+  const [loading, setLoading] = useState(true); // 🔥 NUEVO
 
   const fetchUser = async () => {
     try {
@@ -10,6 +11,8 @@ export default function useAuth() {
       setUser(res.data);
     } catch {
       setUser(null);
+    } finally {
+      setLoading(false); // 🔥 CLAVE
     }
   };
 
@@ -17,5 +20,5 @@ export default function useAuth() {
     fetchUser();
   }, []);
 
-  return { user };
+  return { user, loading };
 }

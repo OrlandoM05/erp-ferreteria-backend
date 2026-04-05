@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import BranchSelector from "../components/BranchSelector";
 import useAuth from "../hooks/useAuth";
+import usePermissions from "../hooks/usePermissions";
 
 export default function MainLayout({ children }) {
   const { user } = useAuth();
+  const { hasPermission } = usePermissions();
 
   return (
     <div className="flex h-screen bg-[#0f172a] text-[#e2e8f0]">
@@ -20,41 +22,43 @@ export default function MainLayout({ children }) {
             Dashboard
           </Link>
 
-          <Link to="/products" className="hover:text-orange-400">
-            Productos
-          </Link>
+          {hasPermission("products:view") && (
+            <Link to="/products" className="hover:text-orange-400">
+              Productos
+            </Link>
+          )}
 
-          <Link to="/inventory" className="hover:text-orange-400">
-            Inventario
-          </Link>
+          {hasPermission("inventory:view") && (
+            <Link to="/inventory" className="hover:text-orange-400">
+              Inventario
+            </Link>
+          )}
 
-          <Link to="/sales" className="hover:text-orange-400">
-            Ventas
-          </Link>
+          {hasPermission("sales:create") && (
+            <Link to="/sales" className="hover:text-orange-400">
+              Ventas
+            </Link>
+          )}
 
-          {/* 🔐 SOLO ADMIN */}
-          {user?.role === "Admin" && (
+          {hasPermission("purchases:create") && (
             <Link to="/purchases" className="hover:text-orange-400">
               Compras
             </Link>
           )}
 
-          {/* 🔐 ADMIN + GERENTE */}
-          {["Admin", "Gerente"].includes(user?.role) && (
+          {hasPermission("reports:view") && (
             <Link to="/reports" className="hover:text-orange-400">
               Reportes
             </Link>
           )}
 
-          {/* 🔐 SOLO ADMIN */}
-          {user?.role === "Admin" && (
+          {hasPermission("users:manage") && (
             <Link to="/users" className="hover:text-orange-400">
               Usuarios
             </Link>
           )}
 
-          {/* 🔐 SOLO ADMIN (NUEVO) */}
-          {user?.role === "Admin" && (
+          {hasPermission("roles:manage") && (
             <Link to="/roles" className="hover:text-orange-400">
               Roles
             </Link>

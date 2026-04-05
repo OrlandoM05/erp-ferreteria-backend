@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_user, require_role
 from app.modules.users.models import User
-from app.modules.users.roles_models import Role, Permission  # ✅ IMPORT CORRECTO
+from app.modules.users.roles_models import Role, Permission
 from app.db.session import get_db
 
 from app.modules.users.schemas import UserCreate
@@ -14,10 +14,16 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/me")
 def read_me(user: User = Depends(get_current_user)):
+    permissions = []
+
+    if user.role and user.role.permissions:
+        permissions = [p.code for p in user.role.permissions]
+
     return {
         "id": user.id,
         "email": user.email,
         "role": user.role.name if user.role else None,
+        "permissions": permissions,
     }
 
 

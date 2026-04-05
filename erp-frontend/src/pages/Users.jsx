@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api/api";
 
 export default function Users() {
@@ -6,6 +6,22 @@ export default function Users() {
   const [password, setPassword] = useState("");
   const [roleId, setRoleId] = useState("");
   const [branchId, setBranchId] = useState(1);
+  const [roles, setRoles] = useState([]);
+
+  // 🔄 cargar roles desde backend
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const res = await api.get("/users/roles");
+      setRoles(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("Error cargando roles");
+    }
+  };
 
   const handleCreate = async () => {
     if (!email || !password || !roleId) {
@@ -55,17 +71,20 @@ export default function Users() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {/* ROLES */}
+        {/* 🔥 ROLES DINÁMICOS */}
         <select
           className="p-3 rounded bg-[#020617] text-white"
           value={roleId}
           onChange={(e) => setRoleId(e.target.value)}
         >
           <option value="">Seleccionar rol</option>
-          <option value="1">Admin</option>
-          <option value="2">Gerente</option>
-          <option value="3">Vendedor</option>
-          <option value="4">Almacén</option>
+
+          {roles.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.name}
+            </option>
+          ))}
+
         </select>
 
         <button
