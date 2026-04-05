@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import BranchSelector from "../components/BranchSelector";
+import useAuth from "../hooks/useAuth";
 
 export default function MainLayout({ children }) {
+  const { user } = useAuth();
+
   return (
     <div className="flex h-screen bg-[#0f172a] text-[#e2e8f0]">
 
@@ -12,12 +15,37 @@ export default function MainLayout({ children }) {
         </h1>
 
         <nav className="flex flex-col gap-3 text-sm">
-          <Link to="/" className="hover:text-orange-400">Dashboard</Link>
-          <Link to="/products" className="hover:text-orange-400">Productos</Link>
-          <Link to="/inventory" className="hover:text-orange-400">Inventario</Link>
-          <Link to="/sales" className="hover:text-orange-400">Ventas</Link>
-          <Link to="/purchases" className="hover:text-orange-400">Compras</Link>
-          <Link to="/reports" className="hover:text-orange-400">Reportes</Link>
+
+          <Link to="/" className="hover:text-orange-400">
+            Dashboard
+          </Link>
+
+          <Link to="/products" className="hover:text-orange-400">
+            Productos
+          </Link>
+
+          <Link to="/inventory" className="hover:text-orange-400">
+            Inventario
+          </Link>
+
+          <Link to="/sales" className="hover:text-orange-400">
+            Ventas
+          </Link>
+
+          {/* 🔐 SOLO ADMIN */}
+          {user?.role === "Admin" && (
+            <Link to="/purchases" className="hover:text-orange-400">
+              Compras
+            </Link>
+          )}
+
+          {/* 🔐 ADMIN + GERENTE */}
+          {["Admin", "Gerente"].includes(user?.role) && (
+            <Link to="/reports" className="hover:text-orange-400">
+              Reportes
+            </Link>
+          )}
+
         </nav>
       </aside>
 
@@ -38,13 +66,25 @@ export default function MainLayout({ children }) {
             {/* Selector de sucursal */}
             <BranchSelector />
 
-            {/* Rol */}
+            {/* 👤 Rol dinámico */}
             <span className="text-sm text-gray-400">
-              Admin
+              {user?.role || "Cargando..."}
             </span>
+
+            {/* 🔥 Logout */}
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}
+              className="text-red-400 text-sm hover:text-red-300"
+            >
+              Logout
+            </button>
 
             {/* Avatar */}
             <div className="w-8 h-8 bg-orange-500 rounded-full" />
+
           </div>
 
         </header>
