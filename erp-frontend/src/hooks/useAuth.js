@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/api";
 
 export default function useAuth() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined); // 🔥 CLAVE
 
   const fetchUser = async () => {
     try {

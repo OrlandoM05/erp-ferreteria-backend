@@ -46,10 +46,17 @@ export default function MainLayout({ children }) {
             </Link>
           )}
 
-          {/* 🔐 SOLO ADMIN (NUEVO) */}
+          {/* 🔐 SOLO ADMIN */}
           {user?.role === "Admin" && (
             <Link to="/users" className="hover:text-orange-400">
               Usuarios
+            </Link>
+          )}
+
+          {/* 🔐 SOLO ADMIN (NUEVO) */}
+          {user?.role === "Admin" && (
+            <Link to="/roles" className="hover:text-orange-400">
+              Roles
             </Link>
           )}
 

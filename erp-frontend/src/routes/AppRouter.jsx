@@ -9,7 +9,8 @@ import Sales from "../pages/Sales";
 import Inventory from "../pages/Inventory";
 import Purchases from "../pages/Purchases";
 import Reports from "../pages/Reports";
-import Users from "../pages/Users"; // ✅ AÑADIDO
+import Users from "../pages/Users";
+import Roles from "../pages/Roles"; // ✅ NUEVO
 
 export default function AppRouter() {
   return (
@@ -27,17 +28,18 @@ export default function AppRouter() {
               <MainLayout>
                 <Routes>
 
-                  <Route path="/" element={<Dashboard />} />
+                  {/* 🏠 Dashboard */}
+                  <Route index element={<Dashboard />} />
 
-                  <Route path="/products" element={<Products />} />
+                  <Route path="products" element={<Products />} />
 
-                  <Route path="/sales" element={<Sales />} />
+                  <Route path="sales" element={<Sales />} />
 
-                  <Route path="/inventory" element={<Inventory />} />
+                  <Route path="inventory" element={<Inventory />} />
 
                   {/* 🔐 SOLO ADMIN */}
                   <Route
-                    path="/purchases"
+                    path="purchases"
                     element={
                       <RoleRoute roles={["Admin"]}>
                         <Purchases />
@@ -47,7 +49,7 @@ export default function AppRouter() {
 
                   {/* 🔐 ADMIN + GERENTE */}
                   <Route
-                    path="/reports"
+                    path="reports"
                     element={
                       <RoleRoute roles={["Admin", "Gerente"]}>
                         <Reports />
@@ -55,12 +57,22 @@ export default function AppRouter() {
                     }
                   />
 
-                  {/* 🔐 SOLO ADMIN (NUEVO) */}
+                  {/* 🔐 SOLO ADMIN */}
                   <Route
-                    path="/users"
+                    path="users"
                     element={
                       <RoleRoute roles={["Admin"]}>
                         <Users />
+                      </RoleRoute>
+                    }
+                  />
+
+                  {/* 🔐 SOLO ADMIN (NUEVO) */}
+                  <Route
+                    path="roles"
+                    element={
+                      <RoleRoute roles={["Admin"]}>
+                        <Roles />
                       </RoleRoute>
                     }
                   />

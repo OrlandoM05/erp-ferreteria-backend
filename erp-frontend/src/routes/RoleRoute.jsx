@@ -4,9 +4,20 @@ import useAuth from "../hooks/useAuth";
 export default function RoleRoute({ children, roles }) {
   const { user } = useAuth();
 
-  if (!user) return null;
+  // 🔄 Mientras carga el user
+  if (user === undefined) return null;
 
-  if (!roles.includes(user.role)) {
+  // 🔐 No autenticado
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // ✅ Normalizar roles (evita errores por mayúsculas/minúsculas)
+  const userRole = user.role?.toLowerCase().trim();
+  const allowedRoles = roles.map(r => r.toLowerCase().trim());
+
+  // 🚫 Sin permiso
+  if (!allowedRoles.includes(userRole)) {
     return <Navigate to="/" />;
   }
 
