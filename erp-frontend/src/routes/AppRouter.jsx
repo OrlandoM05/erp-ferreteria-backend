@@ -6,7 +6,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import Products from "../pages/Products";
 import Sales from "../pages/Sales"; // 🔥 IMPORTANTE
 import Inventory from "../pages/Inventory";
-
+import Purchases from "../pages/Purchases";
+import Reports from "../pages/Reports";
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -28,6 +29,8 @@ export default function AppRouter() {
                   {/* 🔥 NUEVA RUTA */}
                   <Route path="/sales" element={<Sales />} />
                   <Route path="/inventory" element={<Inventory />} />
+                  <Route path="/purchases" element={<Purchases />} />
+                  <Route path="/reports" element={<Reports />} />
                 </Routes>
               </MainLayout>
             </ProtectedRoute>

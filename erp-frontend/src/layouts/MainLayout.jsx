@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import BranchSelector from "../components/BranchSelector";
 
 export default function MainLayout({ children }) {
   return (
@@ -25,20 +26,34 @@ export default function MainLayout({ children }) {
 
         {/* Topbar */}
         <header className="h-16 border-b border-[#1e293b] flex items-center justify-between px-6">
+          
+          {/* IZQUIERDA */}
           <span className="text-sm text-gray-400">
             Sistema ERP - Ferretería
           </span>
 
+          {/* DERECHA */}
           <div className="flex items-center gap-4">
-            <span className="text-sm">Admin</span>
+
+            {/* Selector de sucursal */}
+            <BranchSelector />
+
+            {/* Rol */}
+            <span className="text-sm text-gray-400">
+              Admin
+            </span>
+
+            {/* Avatar */}
             <div className="w-8 h-8 bg-orange-500 rounded-full" />
           </div>
+
         </header>
 
         {/* Content */}
         <main className="p-6 overflow-y-auto">
           {children}
         </main>
+
       </div>
     </div>
   );

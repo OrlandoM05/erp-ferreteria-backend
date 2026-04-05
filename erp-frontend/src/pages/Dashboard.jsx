@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "../api/api";
 import logo from "../assets/logo.png";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function Dashboard() {
   const [data, setData] = useState({
@@ -8,6 +16,8 @@ export default function Dashboard() {
     total_products: 0,
     low_stock: 0,
   });
+
+  const [chartData, setChartData] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -18,13 +28,22 @@ export default function Dashboard() {
     }
   };
 
+  const fetchChart = async () => {
+    try {
+      const res = await api.get("/reports/sales-by-day");
+      setChartData(res.data);
+    } catch (error) {
+      console.error("Error chart");
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchChart();
   }, []);
 
   return (
     <div>
-
       {/* HEADER */}
       <div className="flex items-center gap-4 mb-6">
         <img src={logo} alt="logo" className="w-20" />
@@ -32,15 +51,12 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-orange-500">
             Ferretería y Tlapalería La Unión
           </h1>
-          <p className="text-gray-400 text-sm">
-            Panel de control
-          </p>
+          <p className="text-gray-400 text-sm">Panel de control</p>
         </div>
       </div>
 
       {/* CARDS */}
       <div className="grid grid-cols-3 gap-6">
-
         <div className="bg-[#1e293b] p-4 rounded-xl">
           <h2 className="text-gray-400">Ventas realizadas</h2>
           <p className="text-2xl font-bold text-orange-500">
@@ -61,7 +77,27 @@ export default function Dashboard() {
             {data.low_stock}
           </p>
         </div>
+      </div>
 
+      {/* GRÁFICA REAL */}
+      <div className="bg-[#1e293b] p-6 rounded-xl mt-6">
+        <h2 className="text-gray-400 mb-4">Ventas por día</h2>
+
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="name" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="ventas"
+                stroke="#f97316"
+                strokeWidth={3}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
